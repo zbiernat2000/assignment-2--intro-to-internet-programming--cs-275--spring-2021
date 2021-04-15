@@ -5,6 +5,7 @@
 !.eslintrc.json
 !.stylelintrc.json
 !.babelrc
+!dev
 
 !gulpfile.js
 !package.json
