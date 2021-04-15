@@ -5,11 +5,11 @@ const htmlCompressor = require(`gulp-htmlmin`);
 const htmlValidator = require(`gulp-html`);
 const jsLinter = require(`gulp-eslint`);
 const jsCompressor = require(`gulp-uglify`);
-const imageCompressor = require(`gulp-imagemin`);
-const cache = require(`gulp-cache`);
 const browserSync = require(`browser-sync`);
 const cssLinter = require(`gulp-stylelint`);
 const cssValidator = require('gulp-w3c-css');
+const cssCompressor = require(`gulp-sass`);
+
 
 const reload = browserSync.reload;
 let browserChoice = `default`;
@@ -67,6 +67,15 @@ let transpileJSForProd = () => {
         .pipe(jsCompressor())
         .pipe(dest(`prod/js`));
 
+};
+
+let compileCSSForProd = () => {
+    return src(`dev/css/style.css`)
+        .pipe(cssCompressor({
+            outputStyle: `compressed`,
+            precision: 10
+        }).on(`error`, cssCompressor.logError))
+        .pipe(dest(`prod/css`));
 };
 
 let lintCSS = () => {
@@ -190,7 +199,8 @@ exports.build = series(
     validateHTML,
     validateCSS,
     compressHTML,
-    transpileJSForProd
+    transpileJSForProd,
+    compileCSSForProd
 );
 exports.serve = series(lintJS, transpileJSForDev, validateHTML, validateCSS, lintCSS,  serve);
 exports.clean = clean;
