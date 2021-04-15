@@ -1,4 +1,5 @@
 const { src, dest, series, watch } = require(`gulp`);
+const gulp = require('gulp');
 const del = require(`del`);
 const babel = require(`gulp-babel`);
 const htmlCompressor = require(`gulp-htmlmin`);
@@ -9,12 +10,11 @@ const browserSync = require(`browser-sync`);
 const cssLinter = require(`gulp-stylelint`);
 const cssValidator = require('gulp-w3c-css');
 const cssCompressor = require(`gulp-sass`);
+const htmlLinter = require('gulp-html-lint');
 
 
 const reload = browserSync.reload;
 let browserChoice = `default`;
-
-
 
 async function firefox () {
     browserChoice = `firefox`;
@@ -41,6 +41,17 @@ async function allBrowsers () {
         `microsoft-edge`
     ];
 }
+
+let lintHTML = () => {
+    return src(`dev/html/*.html`)
+        .pipe(htmlLinter({
+            failAfterError: true,
+            reporters: [
+                {formatter: `verbose`, console: true}
+            ]
+        }));
+    };
+
 
 let validateHTML = () => {
     return src([
@@ -202,6 +213,6 @@ exports.build = series(
     transpileJSForProd,
     compileCSSForProd
 );
-exports.serve = series(lintJS, transpileJSForDev, validateHTML, validateCSS, lintCSS,  serve);
+exports.serve = series(lintJS, transpileJSForDev, validateHTML, validateCSS, lintCSS, lintHTML,  serve);
 exports.clean = clean;
 exports.default = listTasks;

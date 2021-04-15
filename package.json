@@ -33,6 +33,8 @@
   },
   "homepage": "https://github.com/zbiernat2000/assignment-2--intro-to-internet-programming--cs-275--spring-2021#readme",
   "dependencies": {
+    "gulp-html-lint": "^0.0.2",
+    "gulp-sass": "^4.1.0",
     "gulp-w3c-css": "^2.0.0"
   }
 }
