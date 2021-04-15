@@ -8,8 +8,12 @@ const jsCompressor = require(`gulp-uglify`);
 const imageCompressor = require(`gulp-imagemin`);
 const cache = require(`gulp-cache`);
 const browserSync = require(`browser-sync`);
+const cssLinter = require(`gulp-stylelint`);
+const cssValidator = require('gulp-w3c-css');
+
 const reload = browserSync.reload;
 let browserChoice = `default`;
+
 
 
 async function firefox () {
@@ -63,6 +67,23 @@ let transpileJSForProd = () => {
         .pipe(jsCompressor())
         .pipe(dest(`prod/js`));
 
+};
+
+let lintCSS = () => {
+    return src(`dev/css/*.css`)
+        .pipe(cssLinter({
+            failAfterError: true,
+            reporters: [
+                {formatter: `verbose`, console: true}
+            ]
+        }));
+};
+
+let validateCSS = () => {
+    return src([
+        `dev/css/*.css`,
+        `dev/css/**/*.css`])
+        .pipe(cssValidator());
 };
 
 let lintJS = () => {
@@ -166,9 +187,11 @@ exports.compressHTML = compressHTML;
 exports.transpileJSForProd = transpileJSForProd;
 exports.lintJS = lintJS;
 exports.build = series(
+    validateHTML,
+    validateCSS,
     compressHTML,
     transpileJSForProd
 );
-exports.serve = series(lintJS, transpileJSForDev, validateHTML, serve);
+exports.serve = series(lintJS, transpileJSForDev, validateHTML, validateCSS, lintCSS,  serve);
 exports.clean = clean;
 exports.default = listTasks;
