@@ -14,3 +14,7 @@ window.onload = () =>{
 
 }
 
+function setText(string){
+    recipe.textContent = string;
+}
+
